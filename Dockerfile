@@ -1,35 +1,24 @@
 FROM ubuntu:22.04
 
-# タイムゾーン等の対話型アラートを無視
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Pelican用のユーザー作成
+# containerユーザーを先に作る
 RUN useradd -m -d /home/container container
 
-# あなたが欲しいものを全部ここに書く
+# インストール
 RUN apt-get update && apt-get install -y \
-    sudo \
-    python3 \
-    python3-pip \
-    nodejs \
-    npm \
-    chromium-browser \
-    libnss3 \
-    libatk1.0-0 \
-    libcups2 \
-    libdrm2 \
-    libgbm1 \
-    curl \
-    git \
-    wget \
+    python3 python3-pip nodejs npm \
+    chromium-browser libnss3 libatk1.0-0 libcups2 libdrm2 libgbm1 \
+    curl git wget build-essential \
     && apt-get clean
 
-# sudoをパスワードなしで使えるようにする
-RUN echo "container ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+# 【ここが重要！】containerユーザーに、システムの重要フォルダへの権限を「先行して」与える
+# ※ sudoなしで pip install やファイルの書き換えができるようにします
+RUN chown -R container:container /usr/local /opt /var/lib
 
-# 実行環境の設定
-# USER container
-# ENV USER=container HOME=/home/container
-# WORKDIR /home/container
+# Pelican用の設定
+USER container
+ENV USER=container HOME=/home/container
+WORKDIR /home/container
 
 CMD ["/bin/bash"]
