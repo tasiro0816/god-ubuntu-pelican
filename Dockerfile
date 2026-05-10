@@ -28,8 +28,8 @@ RUN apt-get update && apt-get install -y \
 RUN echo "container ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # 実行環境の設定
-USER container
-ENV USER=container HOME=/home/container
-WORKDIR /home/container
+# USER container
+# ENV USER=container HOME=/home/container
+# WORKDIR /home/container
 
 CMD ["/bin/bash"]
